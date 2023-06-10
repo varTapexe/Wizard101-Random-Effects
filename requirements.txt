@@ -1,8 +1,11 @@
 asyncio
+keyboard
+subprocess
+pyautogui
 math
 random
-pyautogui
-git+https://github.com/wizwalker/wizwalker@development
+colorama
+git+https://github.com/wizwalker/wizwalker@development # this one will take a bit to download.
 
 # do "pip install -r requirements.txt" in the terminal
 # then, to run do "py random_effects.py" in the terminal
