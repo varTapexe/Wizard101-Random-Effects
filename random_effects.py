@@ -1,8 +1,10 @@
 import asyncio
 # import struct < not needed atm
-# import keyboard < not needed atm
+import keyboard
+import subprocess
 import pyautogui
 import math
+from colorama import init, Fore, Back, Style
 from wizwalker import ClientHandler
 from wizwalker.memory.memory_objects.camera_controller import ElasticCameraController, CameraController
 from wizwalker import Client, utils, Orient, XYZ, Keycode, Hotkey, HotkeyListener, ModifierKeys
@@ -11,6 +13,8 @@ import random
 
 # Customize Below:
 utils.override_wiz_install_location(r'E:\Kingsisle Entertainment\Wizard101') # Enter your wizard101 path.
+
+init() #for logging
 
 # DO NOT TOUCH ANYTHING IN THE DASHES -----------------------------------------------------
 
@@ -107,7 +111,8 @@ async def load_check(effect, client: Client, client_camera: CameraController):
 # This function checks if you encounter a loading screen (or enter a new zone, which clears all effects)
 
 async def unhook_ww(client: Client, client_camera: CameraController, handler: ClientHandler):
-    print("Disabling Script...")
+    print(Back.RED + "Disabling Script...")
+    Back.RESET
     await set_player_scale(1.0, client)
     await set_player_speed(0, client)
     await set_camera_distance(150, 450, 300, 150, client)
@@ -130,12 +135,18 @@ async def disable_effect(client, camera):
         await update_camera(None, 0.0, None, camera)
     elif current_effect == "player":
         await update_player(0.0, None, None, client)
+    elif current_effect == "disabled gui":
+        pyautogui.keyDown("ctrl")
+        pyautogui.keyDown("g")
+        pyautogui.keyUp("ctrl")
+        pyautogui.keyUp("g")
     # elif current_effect == "hotkey":
     #     await invert_controls(client, camera)
     
 async def fast(client, camera):
     global current_effect
-    print("Activating fast effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Fast - 50x Speed ⏩")
     try:
         await set_player_speed(5000, client)
     except:
@@ -144,7 +155,8 @@ async def fast(client, camera):
 
 async def slow(client, camera):
     global current_effect
-    print("Activating slow effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Slow -50% Speed 🐌")
     try:
         await set_player_speed(-50, client)
     except:
@@ -153,7 +165,8 @@ async def slow(client, camera):
 
 async def giant(client, camera):
     global current_effect
-    print("Activating giant effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Giant - 3x Player Size ⬆️")
     await set_player_scale(3, client)
     await set_player_speed(100, client)
     await set_camera_distance(600, 900, 750, 600, client)
@@ -161,7 +174,8 @@ async def giant(client, camera):
 
 async def titan(client, camera):
     global current_effect
-    print("Activating TITAN effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Titan - 10x Player Size ⬆️⬆️⬆️")
     await set_player_scale(10, client)
     await set_player_speed(300, client)
     await set_camera_distance(3000, 3500, 3500, 3500, client)
@@ -169,7 +183,8 @@ async def titan(client, camera):
 
 async def tiny(client, camera):
     global current_effect
-    print("Activating tiny effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Tiny - 0.5x Player Size 🔽")
     await set_player_scale(0.5, client)
     await set_player_speed(-35, client)
     await set_camera_distance(100, 150, 125, 100, client)
@@ -177,40 +192,22 @@ async def tiny(client, camera):
 
 async def invisible(client, camera):
     global current_effect
-    print("Activating invisible effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Invisible - 0% Player Size ⏬")
     await set_player_scale(0, client)
     current_effect = "scale"
 
 async def upside_down_camera(client, camera):
     global current_effect
-    print("Activating upside down CAMERA effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "UPSIDE DOWN CAMERA 🎥🔃")
     await update_camera(None, 3.14, None, camera)
     current_effect = "camera"
-
-async def flip_world(client, camera):
-    global current_effect
-    print("Activating upside down WORLD effect...")
-    await update_camera(None, 3.14, None, camera)
-    current_effect = "camera"
-
-# async def first_person(client, camera):
-#     global current_effect
-#     print("Activating first person effect...")
-#     iterations = 0
-#     current_effect = "first_person"
-#     while iterations < 600:
-#         iterations = iterations + 1
-#         if current_effect == "first_person":
-#             await set_camera_distance(0.1, 0.1, 0.1, 0.1, client)
-#             await asyncio.sleep(0.01)
-#         else:
-#             iterations = 601
-
-# ^^^ ❌ This isn't working well. Don't enable it. ^^^
 
 async def drunk(client: Client, camera: CameraController):
     global current_effect
-    print("Activating drunk effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "DRUNK... (?) 🍻")
     current_effect = "control"
     keys = [Keycode.A, Keycode.D]
     seconds = 0
@@ -219,6 +216,24 @@ async def drunk(client: Client, camera: CameraController):
         if random.random() <= 0.1:
             await client.send_key(random.choice(keys), random.random() * 10 / 4)
         await asyncio.sleep(1)
+
+async def chat_control(client, camera):
+    global current_effect
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Chat Controls - !commands 🤖")
+    current_effect = "chat"
+    script_path = 'chat_controls\\bot.py'
+    # Run the script as a separate process
+    process = subprocess.Popen(['python', script_path])
+
+    # Wait for 60 seconds
+    await asyncio.sleep(3)
+    Fore.WHITE 
+    await asyncio.sleep(57)
+
+    # Terminate the process after 60 seconds
+    process.terminate()
+    print("Chat no longer has control.")
 
 # async def invert_controls(client: Client, camera):
 #     global current_effect
@@ -250,7 +265,8 @@ async def drunk(client: Client, camera: CameraController):
 
 async def laying_down_player(client, camera):
     global current_effect
-    print("Activating laying down PLAYER effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Sleeping Wizard..? 💤")
     await update_player(3.14 / 2, None, None, client)
     current_effect = "player"
 
@@ -259,7 +275,8 @@ screen_width, screen_height = pyautogui.size()
 
 async def move_mouse_randomly(client, camera):
     global current_effect
-    print("Activating mouse effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Move Mouse Randomly 🐁")
     current_effect = "control"
     seconds = 0
     while seconds <= 60:
@@ -272,12 +289,34 @@ async def move_mouse_randomly(client, camera):
             # Move the mouse to the random coordinates
             pyautogui.moveTo(x, y, duration=movement_duration)
         await asyncio.sleep(1)
+
+async def open_random_menus(client: Client, camera: CameraController):
+    global current_effect
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Random Menu Spam 🪟")
+    current_effect = "control"
+    keys = [Keycode.B, Keycode.C, Keycode.F, Keycode.I, Keycode.J, Keycode.M, Keycode.N, Keycode.P, Keycode.Q, Keycode.ESC]
+    seconds = 0
+    while seconds <= 120:
+        seconds = seconds + 1
+        if random.random() <= 0.5:
+            await client.send_key(random.choice(keys), 0.1)
+        await asyncio.sleep(0.5)
     
-screen_width, screen_height = pyautogui.size()
+async def hide_gui(client: Client, camera: CameraController):
+    global current_effect
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Hide GUI ❌")
+    current_effect = "disabled gui"
+    pyautogui.keyDown("ctrl")
+    pyautogui.keyDown("g")
+    pyautogui.keyUp("ctrl")
+    pyautogui.keyUp("g")
 
 async def random_entity_tp(client: Client, camera):
     global current_effect
-    print("Activating tp effect...")
+    print(Fore.BLUE + "EFFECT | " +
+      Fore.GREEN + "Teleport to Random Entity ❔")
     current_effect = "tp"
     seconds = 0
     entity_list = []
@@ -291,17 +330,16 @@ async def random_entity_tp(client: Client, camera):
                         entity_list.append(entity)
             chosen_entity = random.choice(entity_list)
             await client.teleport(await chosen_entity.location())
-            print(f"Teleported to {await chosen_entity.display_name()}.")
+            print(Fore.LIGHTGREEN_EX + f"Teleported to {await chosen_entity.display_name()}.")
+            Fore.RESET
         await asyncio.sleep(1) # wait 1s for 1 min timer
 
-    # Generate random coordinates within the screen boundaries
-
 # List of available effects
-effects = [drunk, slow, fast, tiny, giant, upside_down_camera, laying_down_player, invisible, titan, move_mouse_randomly, random_entity_tp]  # Add more effects here if you know what you're doing.
-effects_with_timer = [drunk, move_mouse_randomly, random_entity_tp]
-
+effects = [drunk, slow, fast, tiny, giant, upside_down_camera, laying_down_player, invisible, titan, move_mouse_randomly, random_entity_tp, open_random_menus, hide_gui, chat_control]  # Add more effects here if you know what you're doing.
+effects_with_timer = [drunk, move_mouse_randomly, random_entity_tp, open_random_menus, chat_control]
 async def main():
-    print("Starting in 3 seconds...") # Feel free to change the 3 to any amount of delay before it starts. 
+    print(Fore.BLUE + "LAUNCHING | " +
+    Fore.GREEN + "Starting in 3 seconds...") # Feel free to change the 3 to any amount of delay before it starts. 
     await asyncio.sleep(3) # Change this too if you do
     try:
         handler = ClientHandler()
@@ -310,13 +348,17 @@ async def main():
         global enabled
 
         try:
-            print("Hooking clients...")
+            print(Fore.BLUE + "HOOKING | " +
+    Fore.WHITE + "Hooking clients...")
             await client.activate_hooks()
             enabled = True
             # await client.mouse_handler.activate_mouseless() # <-- Dont activate this unless you know what you're doing.
-            print("Activated hooks!")
+            print(Fore.BLUE + "HOOKING | " +
+    Fore.GREEN + "Hooked!")
         except:
-            print("Failed to hook clients.")
+            print(Fore.RED + "ERR | " +
+    Fore.RED + "Failed to hook clients.")
+        Fore.WHITE # Reset console to white.
 
         default_scale = await client.body.scale()
         default_speed_multi = await client.client_object.speed_multiplier()
@@ -327,29 +369,33 @@ async def main():
         await update_camera(None, 0.0, None, client_camera)
         await update_player(0.0, None, None, client)
         zone_name = await client.zone_name()
-        print(f'Current Stats:\nScale: {default_scale}\nSpeed: {default_speed_multi}')
+        # print(f'Current Stats:\nScale: {default_scale}\nSpeed: {default_speed_multi}')
 
         while enabled == True:
             
             # Disable the current effect
             if not current_effect == None:
-                print(f"Disabling {current_effect} effect...")
+                # print(f"Disabling {current_effect} effect...")
                 await disable_effect(client, client_camera)
-                print("Disabled!")
+                # print("Disabled!")
 
             # Choose a random effect from the list
-            print("Choosing random effect...")
+            print(Fore.BLUE + "EFFECT | " +
+    Fore.WHITE + "Choosing random effect...")
             effect = random.choice(effects)
 
             # Activate the chosen effect
             await effect(client, client_camera)
-            print("Activated!")
+            print(Fore.BLUE + "EFFECT | " +
+    Fore.WHITE + "Effect applied!")
             if not effect in effects_with_timer:
                 await load_check(effect, client, client_camera) # 60 Second Timer
             
+            Fore.WHITE # for prints.
             print("Waiting for Wizard to be available.")
             await wait_for_free(client) # Waits for the client to not be loading or in battle.
             print("Wizard detected as available.")
+            Fore.WHITE # for prints.
 
             # Add small delay 
             await asyncio.sleep(0.01)
