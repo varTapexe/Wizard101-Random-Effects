@@ -1,0 +1,10 @@
+asyncio
+math
+random
+pyautogui
+git+https://github.com/wizwalker/wizwalker@development
+
+# do "pip install -r requirements.txt" in the terminal
+# then, to run do "py random_effects.py" in the terminal
+
+# If it doesn't work message me on Discord again or try to fix on your own.
