@@ -111,8 +111,7 @@ async def load_check(effect, client: Client, client_camera: CameraController):
 # This function checks if you encounter a loading screen (or enter a new zone, which clears all effects)
 
 async def unhook_ww(client: Client, client_camera: CameraController, handler: ClientHandler):
-    print(Back.RED + "Disabling Script...")
-    Back.RESET
+    print(Back.RED + "Disabling Script..." + Back.RESET)
     await set_player_scale(1.0, client)
     await set_player_speed(0, client)
     await set_camera_distance(150, 450, 300, 150, client)
@@ -213,7 +212,7 @@ async def drunk(client: Client, camera: CameraController):
     seconds = 0
     while seconds <= 60:
         seconds = seconds + 1
-        if random.random() <= 0.1:
+        if random.random() <= 0.4:
             await client.send_key(random.choice(keys), random.random() * 10 / 4)
         await asyncio.sleep(1)
 
@@ -272,6 +271,7 @@ async def laying_down_player(client, camera):
 
 # Get the screen dimensions
 screen_width, screen_height = pyautogui.size()
+pyautogui.FAILSAFE = False
 
 async def move_mouse_randomly(client, camera):
     global current_effect
