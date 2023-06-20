@@ -51,9 +51,9 @@ pyautogui.FAILSAFE = False
 ##########################################################
 
 # Count down before starting, so you have time to load up the game
-countdown = 3
+countdown = 1
 while countdown > 0:
-    print(countdown)
+    # print(countdown)
     countdown -= 1
     time.sleep(1)
 
